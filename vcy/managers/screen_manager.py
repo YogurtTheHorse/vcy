@@ -20,7 +20,7 @@ def get_screen_class(name: str) -> Type[Screen]:
     return screen_classes[name]
 
 
-def navigate_to(chat: Chat, new_screen: str) -> Optional[Answer]:
+def navigate_to(chat: Chat, new_screen: str) -> Answer:
     chat.screens_stack.append(new_screen)
 
     return get_screen_class(new_screen)(chat).on_open()

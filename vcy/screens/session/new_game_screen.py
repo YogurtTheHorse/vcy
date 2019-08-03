@@ -2,6 +2,7 @@ from typing import Optional
 
 from vcy import text_utils
 from vcy.entities import InputMessage, Answer
+from vcy.managers import screen_manager
 from vcy.models import Session
 from vcy.screens.screen import Screen
 
@@ -25,10 +26,10 @@ class NewGameScreen(Screen):
         session.init_pass()
         session.save()
 
-        return
+        return screen_manager.navigate_to(self.chat, 'wait_room')
 
     def process_message(self, message: InputMessage) -> Answer:
-        if text_utils.is_same_word('оракул', message.text.split()[-1]):
+        if text_utils.is_same_word(['оракул', 'оракл'], message.text.split()[-1]):
             return self.start_session('oracle')
         elif text_utils.is_same_word('искатель', message.text.split()[-1]):
             return self.start_session('seeker')

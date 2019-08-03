@@ -21,5 +21,16 @@ class Screen(ABC):
     def answer(self, text: str, buttons: List[str] = None):
         return Answer(chat_id=self.chat.platform_id, message=text, buttons=buttons or list())
 
+    @abstractmethod
     def on_open(self) -> Optional[Answer]:
         return None
+
+    def navigate_to(self, screen_name: str) -> Answer:
+        from vcy.managers import screen_manager
+
+        return screen_manager.navigate_to(self.chat, screen_name)
+
+    def switch_screen(self, screen_name: str) -> Answer:
+        from vcy.managers import screen_manager
+
+        return screen_manager.switch_screen(self.chat, screen_name)

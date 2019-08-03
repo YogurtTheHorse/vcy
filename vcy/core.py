@@ -5,7 +5,9 @@ from vcy.models import Chat
 from vcy.managers import screen_manager
 from vcy.screens.etc.greetings_screen import GreetingsScreen
 from vcy.screens.etc.tutorial_screen import TutorialScreen
+from vcy.screens.session.new_game_screen import NewGameScreen
 from vcy.screens.session.start_game_screen import StartGameScreen
+from vcy.screens.session.wait_room_screen import WaitRoomScreen
 
 
 def init(connect_to_database: bool = False):
@@ -16,7 +18,7 @@ def init(connect_to_database: bool = False):
 
 
 def register_screens():
-    screens_classes = [GreetingsScreen, TutorialScreen, StartGameScreen]
+    screens_classes = [GreetingsScreen, TutorialScreen, StartGameScreen, NewGameScreen, WaitRoomScreen]
 
     for screen_class in screens_classes:
         screen_manager.register_screen_class(screen_class)
@@ -24,10 +26,6 @@ def register_screens():
 
 def process_input(message: InputMessage) -> Answer:
     chat = Chat.get_by_platform_id(message.chat_id)
-
-    # TODO: remove
-    if message.is_start_message:
-        chat.screens_stack = ['greetings']
 
     screen_class = screen_manager.get_screen_class(chat.screens_stack[-1])
     screen = screen_class(chat)
