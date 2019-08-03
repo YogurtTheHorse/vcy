@@ -24,6 +24,7 @@ class Door(EmbeddedDocument):
     def is_connected_to(self, room: Room):
         return room.id == self.first_room_id or room.id == self.second_room_id
 
+
 class Key(EmbeddedDocument):
     room_id = IntField()
     color = StringField(choices=str_colors)
@@ -35,14 +36,3 @@ class Dungeon(EmbeddedDocument):
     keys = EmbeddedDocumentListField(Key, default=list)  # type: List[Key]
 
     finish_room_id = IntField()
-
-
-
-
-
-
-
-
-
-
-
