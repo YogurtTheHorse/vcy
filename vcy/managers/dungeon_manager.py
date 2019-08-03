@@ -11,7 +11,7 @@ def generate_component(dungeon, color, actions_count_range: Tuple[int, int] = (5
 
     actions_count = random.randint(*actions_count_range)
 
-    component_rooms = [Room(id=next_room_id + 1, color=str(color))]  # type: List[Room]
+    component_rooms = [Room(id=next_room_id, color=str(color))]  # type: List[Room]
     component_doors = []  # type: List[Door]
 
     next_room_id += 1
