@@ -2,9 +2,7 @@ from typing import List
 
 from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, IntField, StringField, BooleanField
 
-from vcy.entities import GameColors
-
-str_colors = [str(color) for color in GameColors]
+from vcy.entities import str_colors
 
 
 class Room(EmbeddedDocument):

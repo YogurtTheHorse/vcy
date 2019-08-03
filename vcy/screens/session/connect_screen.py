@@ -17,7 +17,7 @@ class ConnectScreen(Screen):
         words = message.text.split()
 
         if len(words) != 4:
-            return self.answer('Нужно сказать четыре')
+            return self.answer('Нужно сказать четыре слова')
 
         available_session = Session.find_by_pass(words)
 
@@ -25,7 +25,8 @@ class ConnectScreen(Screen):
             return self.answer('Не найдено игр с такими кодовыми словам, попробуйте еще раз')
         else:
             available_session.join(self.chat)
+            available_session.save()
 
-            self.switch_screen()
+            return self.switch_screen(self.chat.game_screen_name)
 
 

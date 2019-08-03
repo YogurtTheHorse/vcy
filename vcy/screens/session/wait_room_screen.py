@@ -15,6 +15,6 @@ class WaitRoomScreen(Screen):
 
     def process_message(self, message: InputMessage) -> Answer:
         if self.chat.session.ready:
-            raise NotImplementedError()
+            return self.switch_screen(self.chat.game_screen_name)
         else:
             return self.answer('Никто пока что не подключился')

@@ -1,3 +1,4 @@
+from enum import Enum
 from dataclasses import dataclass
 from typing import Optional, List
 
@@ -18,3 +19,12 @@ class Answer:
     message: str
     chat_id: Optional[str] = None
     buttons: List[str] = None
+
+
+class GameColors(Enum):
+    RED = 'red'
+    GREEN = 'green'
+    BLUE = 'blue'
+
+
+str_colors = [str(color) for color in GameColors]

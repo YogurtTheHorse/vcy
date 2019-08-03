@@ -13,7 +13,7 @@ words_for_pass = [
 
 
 def normalize(word: str) -> str:
-    return __morph.parse(word)[0].nomal_form
+    return __morph.parse(word)[0].normal_form
 
 
 def is_positive(text: str) -> bool:

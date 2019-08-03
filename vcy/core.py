@@ -5,6 +5,9 @@ from vcy.models import Chat
 from vcy.managers import screen_manager
 from vcy.screens.etc.greetings_screen import GreetingsScreen
 from vcy.screens.etc.tutorial_screen import TutorialScreen
+from vcy.screens.game.oracle_screen import OracleScreen
+from vcy.screens.game.seeker_screen import SeekerScreen
+from vcy.screens.session.connect_screen import ConnectScreen
 from vcy.screens.session.new_game_screen import NewGameScreen
 from vcy.screens.session.start_game_screen import StartGameScreen
 from vcy.screens.session.wait_room_screen import WaitRoomScreen
@@ -18,7 +21,10 @@ def init(connect_to_database: bool = False):
 
 
 def register_screens():
-    screens_classes = [GreetingsScreen, TutorialScreen, StartGameScreen, NewGameScreen, WaitRoomScreen]
+    screens_classes = [
+        GreetingsScreen, TutorialScreen, StartGameScreen, NewGameScreen, WaitRoomScreen, ConnectScreen,
+        SeekerScreen, OracleScreen
+    ]
 
     for screen_class in screens_classes:
         screen_manager.register_screen_class(screen_class)

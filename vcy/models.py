@@ -3,9 +3,11 @@ from typing import List, Optional
 from cached_property import cached_property
 from mongoengine.queryset.visitor import Q
 from mongoengine import Document, StringField, ReferenceField, DoesNotExist, ListField, BooleanField, DictField, \
-    DynamicField
+    DynamicField, EmbeddedDocumentField
 
 from vcy import text_utils
+from vcy.dungeon_models import Dungeon
+from vcy.managers.dungeon_manager import generate_dungeon
 
 
 class Chat(Document):
@@ -27,6 +29,14 @@ class Chat(Document):
     def session(self) -> 'Session':
         return Session.find_user_session(self)
 
+    @property
+    def is_oracle(self):
+        return self.session is not None and self.session.oracle_chat.platform_id == self.platform_id
+
+    @property
+    def game_screen_name(self):
+        return 'game_oracle' if self.is_oracle else 'game_seeker'
+
 
 class Session(Document):
     oracle_chat = ReferenceField(Chat)
@@ -35,6 +45,8 @@ class Session(Document):
     passphrase = ListField(StringField(), required=True)
 
     turn = StringField(choices=['oracle', 'seeker'])
+
+    dungeon = EmbeddedDocumentField(Dungeon, default=generate_dungeon)
 
     @classmethod
     def find_user_session(cls, chat: Chat) -> Optional['Session']:
