@@ -21,9 +21,9 @@ class Key(EmbeddedDocument):
 
 
 class Dungeon(EmbeddedDocument):
-    rooms = EmbeddedDocumentListField(Room)
-    doors = EmbeddedDocumentListField(Door)
-    keys = EmbeddedDocumentListField(Key)
+    rooms = EmbeddedDocumentListField(Room, default=list)
+    doors = EmbeddedDocumentListField(Door, default=list)
+    keys = EmbeddedDocumentListField(Key, default=list)
 
     finish_room_id = IntField()
 
