@@ -35,23 +35,23 @@ class Chat(Document):
 
     @property
     def game_screen_name(self):
-        return 'game_oracle' if self.is_oracle else 'game_seeker'
+        return 'game_oracle' if self.is_oracle else 'game_rogue'
 
 
 class Session(Document):
     oracle_chat = ReferenceField(Chat)
-    seeker_chat = ReferenceField(Chat)
+    rogue_chat = ReferenceField(Chat)
 
     passphrase = ListField(StringField(), required=True)
 
-    turn = StringField(choices=['oracle', 'seeker'])
+    turn = StringField(choices=['oracle', 'rogue'])
 
     dungeon = EmbeddedDocumentField(Dungeon, default=generate_dungeon)
 
     @classmethod
     def find_user_session(cls, chat: Chat) -> Optional['Session']:
         try:
-            return cls.objects.get(Q(oracle_chat=chat) | Q(seeker_chat=chat))
+            return cls.objects.get(Q(oracle_chat=chat) | Q(rogue_chat=chat))
         except DoesNotExist:
             return None
 
@@ -64,7 +64,7 @@ class Session(Document):
 
     @property
     def ready(self):
-        return self.oracle_chat is not None and self.seeker_chat is not None
+        return self.oracle_chat is not None and self.rogue_chat is not None
 
     def init_pass(self):
         self.passphrase = [text_utils.generate_word_for_pass() for i in range(4)]
@@ -72,7 +72,7 @@ class Session(Document):
     def join(self, chat: Chat):
         if self.oracle_chat is None:
             self.oracle_chat = chat
-        elif self.seeker_chat is None:
-            self.seeker_chat = chat
+        elif self.rogue_chat is None:
+            self.rogue_chat = chat
         else:
             raise ValueError()

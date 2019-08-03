@@ -21,7 +21,7 @@ class NewGameScreen(Screen):
         if role == 'oracle':
             session.oracle_chat = self.chat
         else:
-            session.seeker_chat = self.chat
+            session.rogue_chat = self.chat
 
         session.init_pass()
         session.save()
@@ -32,7 +32,7 @@ class NewGameScreen(Screen):
         if text_utils.is_same_word(['оракул', 'оракл'], message.text.split()[-1]):
             return self.start_session('oracle')
         elif text_utils.is_same_word('искатель', message.text.split()[-1]):
-            return self.start_session('seeker')
+            return self.start_session('rogue')
         else:
             return self.answer('Я вас не понял, попробуй сказать еще раз: искатель или оракул.')
 
