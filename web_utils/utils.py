@@ -2,7 +2,7 @@ import requests
 import json
 
 
-with open('./config.json', 'r') as fin:
+with open('web_utils/config.json', 'r') as fin:
     config = json.load(fin)
 
 oauth_token = config['oauth_token']
