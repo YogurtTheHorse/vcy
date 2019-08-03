@@ -47,25 +47,24 @@ def main():
 
 # Функция для непосредственной обработки диалога.
 def handle_dialog(req, res):
-    user_id = req['session']['user_id']
+    # TODO: test two players with different session_id
+    session_id = req['session']['session_id']
     # _quit = False
     if req['session']['new']:
         # Это новый пользователь.
         # Инициализируем сессию и поприветствуем его.
-        message = InputMessage(user_id, 'start', True)
+        message = InputMessage(session_id, 'start', True)
 
         answer = vcy_core.process_input(message)
         res['response']['text'] = answer.message
         return
 
     message_text = req['request']['command']
-    message = InputMessage(user_id, message_text)
+    message = InputMessage(session_id, message_text)
 
     answer = vcy_core.process_input(message)
     res['response']['text'] = answer.message
     return
-    
-
 
 
 if __name__ == '__main__':
