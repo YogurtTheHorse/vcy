@@ -26,5 +26,8 @@ class GameColors(Enum):
     GREEN = 'green'
     BLUE = 'blue'
 
+    def __str__(self):
+        return '%s' % self.value
+
 
 str_colors = [str(color) for color in GameColors]
