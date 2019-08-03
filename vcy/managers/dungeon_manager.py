@@ -49,7 +49,8 @@ def generate_component(dungeon, color, actions_count_range: Tuple[int, int] = (5
     dungeon.doors.append(Door(id=next_door_id,
                               first_room_id=room_to_connect_components_id,
                               second_room_id=second_room_to_connect_components_id,
-                              color=str(color)))
+                              color=str(color),
+                              is_closed=True))
 
 
 def generate_dungeon() -> Dungeon:
