@@ -1,5 +1,5 @@
 import random
-from typing import Tuple, List
+from typing import Tuple, List, Union
 
 from graphviz import Graph
 
@@ -7,7 +7,7 @@ from vcy.dungeon_models import Dungeon, Room, Door, Key
 from vcy.entities import GameColors, str_colors
 
 
-def connected_doors(room: Room, doors: List[Door]) -> List[Door]:
+def connected_doors(room: Union[Room, int], doors: List[Door]) -> List[Door]:
     return [
         d
         for d in doors
@@ -132,6 +132,12 @@ def generate_dungeon() -> Dungeon:
             for color in GameColors:
                 generate_component(dungeon, color)
 
+            dungeon.finish_room_id = random.choice([
+                room
+                for room in dungeon.rooms
+                if room.color == str(GameColors.BLUE)
+            ]).id
+
             generated = True
         except IndexError:
             dungeon = Dungeon()
@@ -139,7 +145,7 @@ def generate_dungeon() -> Dungeon:
     return dungeon
 
 
-def render_dungeon(dungeon: Dungeon, session_id: str):
+def render_dungeon(dungeon: Dungeon, session_id: str, rogue_position: int):
     filename = f'./dungeons/d-{session_id}.gv'
     g = Graph('Dungeon_graph', filename=filename, format='png', engine='fdp')
 
@@ -147,10 +153,12 @@ def render_dungeon(dungeon: Dungeon, session_id: str):
         contains_key = any(key.room_id == room.id for key in dungeon.keys)
 
         shape = 'circle'
-        if contains_key:
+        if rogue_position == room.id:
+            shape = 'triangle'
+        elif contains_key:
             shape = 'doublecircle'
         elif room.id == dungeon.finish_room_id:
-            shape = 'start'
+            shape = 'star'
 
         g.attr('node', color=str(room.color), shape=shape)
         g.node(str(room.id))
@@ -168,6 +176,26 @@ def render_dungeon(dungeon: Dungeon, session_id: str):
     return f'{filename}.png'
 
 
+def get_all_accessible_rooms(dungeon: Dungeon, start: int):
+    rooms_queue = [start]
+    answer = []
+    visited = []
+
+    while len(rooms_queue) > 0:
+        r = rooms_queue.pop()
+
+        answer.append(r)
+        doors = [d for d in connected_doors(r, dungeon.doors) if not d.is_closed]
+
+        for door in doors:
+            if door.first_room_id != r and door.first_room_id not in answer:
+                rooms_queue.append(door.first_room_id)
+            elif door.second_room_id != r and door.second_room_id not in answer:
+                rooms_queue.append(door.second_room_id)
+
+    return answer
+
+
 def find_all_goals(dungeon: Dungeon) -> List[int]:
     return [key.room_id for key in dungeon.keys] + \
            [dungeon.finish_room_id]
@@ -175,9 +203,18 @@ def find_all_goals(dungeon: Dungeon) -> List[int]:
 
 def is_accessible_without_door(dungeon: Dungeon, goal: int, start: int, door_id: int):
     rooms_queue = [start]
+    visited = []
 
     while len(rooms_queue) > 0:
-        room = rooms_queue.pop()
-        doors = connected_doors(room, dungeon.rooms)
+        r = rooms_queue.pop()
 
-        pass
+        visited.append(r)
+        doors = [d for d in connected_doors(r, dungeon.doors) if not d.is_closed and d.id != door_id]
+
+        for door in doors:
+            if door.first_room_id != r and door.first_room_id not in visited:
+                rooms_queue.append(door.first_room_id)
+            elif door.second_room_id != r and door.second_room_id not in visited:
+                rooms_queue.append(door.second_room_id)
+
+    return goal in visited

@@ -17,4 +17,6 @@ class WaitRoomScreen(Screen):
         if self.chat.session.ready:
             return self.switch_screen(self.chat.game_screen_name)
         else:
-            return self.answer('Никто пока что не подключился')
+            passphrase = ' '.join(self.chat.session.passphrase)
+
+            return self.answer(f'Никто пока что не подключился. Им нужно сказать кодовые слова: {passphrase}')

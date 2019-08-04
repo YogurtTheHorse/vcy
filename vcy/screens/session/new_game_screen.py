@@ -23,7 +23,7 @@ class NewGameScreen(Screen):
         else:
             game_session.rogue_chat = self.chat
 
-        game_session.init_pass()
+        game_session.init_session()
         game_session.save()
 
         return screen_manager.navigate_to(self.chat, 'wait_room')

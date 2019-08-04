@@ -21,4 +21,4 @@ def main():
 
 
 if __name__ == '__main__':
-    render_dungeon(generate_dungeon(), 'test')
+    render_dungeon(generate_dungeon(), 'test', 0)

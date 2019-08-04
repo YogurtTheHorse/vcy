@@ -3,8 +3,11 @@ import os
 import mongoengine
 
 from vcy.entities import InputMessage, Answer
+from vcy.entities.spells.collapse_spell import CollapseSpell
+from vcy.entities.spells.disorientation_spell import DisorientationSpell
+from vcy.entities.spells.teleportation_spell import TeleportationSpell
 from vcy.models import Chat
-from vcy.managers import screen_manager
+from vcy.managers import screen_manager, spells_manager
 from vcy.screens.etc.greetings_screen import GreetingsScreen
 from vcy.screens.etc.tutorial_screen import TutorialScreen
 from vcy.screens.game.oracle_screen import OracleScreen
@@ -20,9 +23,21 @@ def init(connect_to_database: bool = False):
         mongoengine.connect('vcy')
 
     register_screens()
+    register_spells()
 
     # dir with dungeons
     os.makedirs('dungeons', exist_ok=True)
+
+
+def register_spells():
+    spells = [
+        DisorientationSpell(),
+        CollapseSpell(),
+        TeleportationSpell()
+    ]
+
+    for spell in spells:
+        spells_manager.register_spell(spell)
 
 
 def register_screens():

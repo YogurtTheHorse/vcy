@@ -1,12 +1,16 @@
 from abc import ABC, abstractmethod
 
-from vcy.models import GameSession
-
 
 class SpellExecutor(ABC):
     def __init__(self, name):
         self.name = name
 
+    @property
     @abstractmethod
-    def cast(self, session: GameSession):
+    def rendered_name(self) -> str:
+        return ''
+
+    # noinspection PyUnresolvedReferences
+    @abstractmethod
+    def cast(self, session: 'GameSession'):
         pass

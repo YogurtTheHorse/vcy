@@ -6,7 +6,8 @@ from vcy.entities.rules.one_word_rule import OneWordRule
 
 magic_words = [
     'арбуз', 'аптека', 'борода', 'стол', 'стул', 'крематорий', 'диван', 'дверь', 'ноутбук', 'стакан', 'провод',
-    'рука', 'запятая', 'абордаж', 'ключ', 'татуировка', 'точка', 'апельсин', 'феникс', 'скорбь', 'пакет', 'окно'
+    'рука', 'запятая', 'абордаж', 'ключ', 'татуировка', 'точка', 'апельсин', 'феникс', 'скорбь', 'пакет', 'окно',
+    'носок'
 ]
 
 
@@ -30,7 +31,7 @@ def serialize(rule: BaseRule) -> dict:
     if isinstance(rule, OneWordRule):
         return {
             'type': 'owr',
-            'word': OneWordRule.word
+            'word': rule.word
         }
     else:
         raise ValueError()

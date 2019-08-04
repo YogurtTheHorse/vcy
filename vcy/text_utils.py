@@ -44,6 +44,10 @@ def is_same_word(normal_forms: Union[str, List[str]], user_input: str) -> bool:
     return False
 
 
+def said_word(normal_form, text) -> bool:
+    return any(is_same_word(normal_form, w) for w in text.split())
+
+
 def color_to_text(color: Union[GameColors, str], sex: str = 'm'):
     if isinstance(color, str):
         color = GameColors(color)

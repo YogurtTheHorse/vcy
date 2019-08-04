@@ -3,11 +3,12 @@ from typing import List, Optional
 from cached_property import cached_property
 from mongoengine.queryset.visitor import Q
 from mongoengine import Document, StringField, ReferenceField, DoesNotExist, ListField, BooleanField, DictField, \
-    DynamicField, EmbeddedDocumentField, IntField
+    DynamicField, EmbeddedDocumentField, IntField, EmbeddedDocumentListField
 
 from vcy import text_utils
-from vcy.dungeon_models import Dungeon
+from vcy.dungeon_models import Dungeon, Spell
 from vcy.managers.dungeon_manager import generate_dungeon
+from vcy.managers.spells_manager import generate_spells
 
 
 class Chat(Document):
@@ -44,14 +45,24 @@ class GameSession(Document):
 
     passphrase = ListField(StringField(), required=True)  # type: List[str]
 
+    # game
     turn = StringField(choices=['oracle', 'rogue'], default='rogue')  # type: str
     rogue_room = IntField(default=0)  # type: int
+
+    spells = EmbeddedDocumentListField(Spell, default=generate_spells)
 
     # oracle stuff
     map_researched = BooleanField(default=False)  # type: bool
 
+    target_cast = StringField(null=True, default=None)
+    cast_text = StringField(null=True, default=None)
+    oracle_informed = BooleanField(default=False)
+
     # thief stuff
     is_disorientated = BooleanField(default=False)  # type: bool
+
+    informed = BooleanField(default=False)
+    rogue_status = StringField(default=None, null=True)
 
     dungeon = EmbeddedDocumentField(Dungeon, default=generate_dungeon)  # type: Dungeon
 
@@ -73,8 +84,9 @@ class GameSession(Document):
     def ready(self):
         return self.oracle_chat is not None and self.rogue_chat is not None
 
-    def init_pass(self):
+    def init_session(self):
         self.passphrase = [text_utils.generate_word_for_pass() for i in range(4)]
+        # self.spells = generate_spells()
 
     def join(self, chat: Chat):
         if self.oracle_chat is None:

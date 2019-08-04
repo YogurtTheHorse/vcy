@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from cached_property import cached_property
 from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, IntField, StringField, BooleanField, DictField
@@ -21,8 +21,10 @@ class Door(EmbeddedDocument):
     color = StringField(choices=str_colors)
     is_closed = BooleanField(default=False)
 
-    def is_connected_to(self, room: Room):
-        return room.id == self.first_room_id or room.id == self.second_room_id
+    def is_connected_to(self, room: Union[Room, int]):
+        rid = room if isinstance(room, int) else room.id
+
+        return rid == self.first_room_id or rid == self.second_room_id
 
 
 class Key(EmbeddedDocument):
@@ -43,7 +45,7 @@ class Spell(EmbeddedDocument):
     spell_type = StringField()
 
     @cached_property
-    def rule(self) -> BaseRule:
+    def spell_rule(self) -> BaseRule:
         from vcy.managers import rules_manager
 
         return rules_manager.deserialize(self.rule_dict)

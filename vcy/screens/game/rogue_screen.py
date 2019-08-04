@@ -1,8 +1,9 @@
 from typing import Optional
 
 from vcy.entities import Answer, InputMessage, GameColors
+from vcy.managers import spells_manager
 from vcy.screens.game.game_screen import GameScreen
-from vcy.text_utils import color_to_text, normalize
+from vcy.text_utils import color_to_text, normalize, said_word
 
 
 class RogueScreen(GameScreen):
@@ -14,9 +15,15 @@ class RogueScreen(GameScreen):
         if self.session.turn == 'oracle':
             return self.answer('Судя по всему сейчас не ваш ход, позалипайте в стену!')
 
+        if self.session.target_cast:
+            if self.session.informed:
+                return self.try_to_protect(message)
+            else:
+                return self.inform_about_attack()
+
         tokens = [normalize(w) for w in message.text.split()]
 
-        if 'открыть' in tokens:
+        if 'открыть' in tokens or 'откроить' in tokens:
             colors = [
                 (str(color), normalize(color_to_text(color)))
                 for color in GameColors
@@ -99,3 +106,52 @@ class RogueScreen(GameScreen):
                            'вовремя защититься от них, то он не сможет их наложить, но для этого вам потребуется '
                            'разгадать шифр оракула.\n\n'
                            f'{self.get_room_info()}')
+
+    def try_to_protect(self, message) -> Answer:
+        cancelling_spell = None
+
+        if said_word('зелье', message.text):
+            cancelling_spell = 'blindness'
+        elif said_word('пластырь', message.text):
+            cancelling_spell = 'disorientation'
+        elif said_word('палочка', message.text):
+            cancelling_spell = 'swap'
+        elif said_word('порошок', message.text):
+            cancelling_spell = 'collapse'
+        elif said_word('свечка', message.text):
+            cancelling_spell = 'teleportation'
+
+        tg = self.session.target_cast
+
+        if cancelling_spell is None:
+            return self.answer('Не поняла, что делаем?')
+        else:
+            self.session.target_cast = None
+            self.session.cast_text = None
+            self.session.informed = False
+
+            if cancelling_spell == tg:
+                self.session.rogue_status = 'saved'
+                return self.answer(f'Отлично, у тебя получилось предотвратить магию!\n\n{self.get_room_info()}')
+            else:
+                self.session.rogue_status = 'doomed'
+                try:
+                    spell = spells_manager.get_spell_by_name(tg)
+                    spell.cast(self.session)
+                except KeyError:
+                    pass  # TODO: Add spells
+
+            print(cancelling_spell, tg)
+            self.session.save()
+            return self.answer(f'У тебя не получилось, магия сработала.\n\n{self.get_room_info()}')
+
+    def inform_about_attack(self) -> Answer:
+        self.session.informed = True
+        self.session.save()
+
+        return self.answer(f'Маг наслал на вас заклинание! Сквозь стены вы слышите:\n'
+                           f'{self.session.cast_text}\n\n'
+                           f'Что попробуете сделать?\n\n'
+                           f'Вы можете выпить зелье против дальтонизма, наложить пластырь от дизориентации, '
+                           f'рассыпать порошок против обвалов, сломать волшебную палочку для отмены подмены дверей или'
+                           f'потушить свечку от телепортации')
