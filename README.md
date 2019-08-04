@@ -15,7 +15,7 @@ Install all requirements from `requirements.txt`. You should install the Graphvi
 
 # Contributors
 
-Most of the code is written by me, YogurtTheHorse, but some parts were written by [ScaryTreeF](https://github.com/ScaryTreeF). 
+Most of the code is written by me, YogurtTheHorse, but some parts were written by [ScaryTreeFF](https://github.com/ScaryTreeFF). 
 Game concept is a combination of mine and ScaryTreeF's ideas.
 
 # Core concept
