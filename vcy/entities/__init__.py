@@ -4,6 +4,13 @@ from typing import Optional, List
 
 
 @dataclass
+class Image:
+    image_path: str
+    title: str
+    description: str
+
+
+@dataclass
 class InputMessage:
     chat_id: str
     text: str
@@ -19,6 +26,7 @@ class Answer:
     message: str
     chat_id: Optional[str] = None
     buttons: List[str] = None
+    image: Image = None
 
 
 class GameColors(Enum):

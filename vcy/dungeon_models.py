@@ -1,8 +1,10 @@
 from typing import List
 
-from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, IntField, StringField, BooleanField
+from cached_property import cached_property
+from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, IntField, StringField, BooleanField, DictField
 
 from vcy.entities import str_colors
+from vcy.entities.rules.base_rule import BaseRule
 
 
 class Room(EmbeddedDocument):
@@ -34,3 +36,14 @@ class Dungeon(EmbeddedDocument):
     keys = EmbeddedDocumentListField(Key, default=list)  # type: List[Key]
 
     finish_room_id = IntField()
+
+
+class Spell(EmbeddedDocument):
+    rule_dict = DictField(StringField())
+    spell_type = StringField()
+
+    @cached_property
+    def rule(self) -> BaseRule:
+        from vcy.managers import rules_manager
+
+        return rules_manager.deserialize(self.rule_dict)

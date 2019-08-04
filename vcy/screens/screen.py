@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from vcy.entities import InputMessage, Answer
+from vcy.entities import InputMessage, Answer, Image
 from vcy.models import Chat
 
 
@@ -18,8 +18,8 @@ class Screen(ABC):
     def process_message(self, message: InputMessage) -> Answer:
         pass
 
-    def answer(self, text: str, buttons: List[str] = None):
-        return Answer(chat_id=self.chat.platform_id, message=text, buttons=buttons or list())
+    def answer(self, text: str, buttons: List[str] = None, image: Image=None):
+        return Answer(chat_id=self.chat.platform_id, message=text, buttons=buttons or list(), image=image)
 
     @abstractmethod
     def on_open(self) -> Optional[Answer]:

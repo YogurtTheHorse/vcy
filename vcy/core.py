@@ -1,3 +1,5 @@
+import os
+
 import mongoengine
 
 from vcy.entities import InputMessage, Answer
@@ -18,6 +20,9 @@ def init(connect_to_database: bool = False):
         mongoengine.connect('vcy')
 
     register_screens()
+
+    # dir with dungeons
+    os.makedirs('dungeons', exist_ok=True)
 
 
 def register_screens():

@@ -4,16 +4,24 @@ from typing import List, Union
 import pymorphy2
 from pymorphy2.analyzer import Parse
 
+from vcy.entities import GameColors
+
 __morph = pymorphy2.MorphAnalyzer()
 
 words_for_pass = [
-    'арбуз', 'аптека', 'борода', 'стол', 'стул', 'крематорий', 'диван', 'дверь', 'ноутбук', 'стакан', 'наушники',
+    'арбуз', 'аптека', 'борода', 'стол', 'стул', 'крематорий', 'диван', 'дверь', 'ноутбук', 'стакан', 'провод',
     'рука', 'запятая', 'абордаж', 'ключ', 'татуировка', 'точка', 'апельсин', 'феникс', 'скорбь', 'пакет'
 ]
 
 
 def normalize(word: str) -> str:
-    return __morph.parse(word)[0].normal_form
+    pre = __morph.parse(word)[0].normal_form
+
+    # AAAA!
+    if pre == 'синия':
+        return 'синий'
+
+    return pre
 
 
 def is_positive(text: str) -> bool:
@@ -34,6 +42,24 @@ def is_same_word(normal_forms: Union[str, List[str]], user_input: str) -> bool:
             return True
 
     return False
+
+
+def color_to_text(color: Union[GameColors, str], sex: str = 'm'):
+    if isinstance(color, str):
+        color = GameColors(color)
+
+    base = ''
+    if color == GameColors.RED:
+        base = 'Красн'
+    elif color == GameColors.BLUE:
+        if sex[0] == 'm':
+            return 'Синий'
+        else:
+            return 'Синяя'
+    elif color == GameColors.GREEN:
+        base = 'Зелен'
+
+    return base + ('ый' if sex[0] == 'm' else 'ая')
 
 
 def generate_word_for_pass():

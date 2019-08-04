@@ -3,7 +3,7 @@ from typing import List, Optional
 from cached_property import cached_property
 from mongoengine.queryset.visitor import Q
 from mongoengine import Document, StringField, ReferenceField, DoesNotExist, ListField, BooleanField, DictField, \
-    DynamicField, EmbeddedDocumentField
+    DynamicField, EmbeddedDocumentField, IntField
 
 from vcy import text_utils
 from vcy.dungeon_models import Dungeon
@@ -26,8 +26,8 @@ class Chat(Document):
             return Chat(platform_id=_id)
 
     @cached_property
-    def session(self) -> 'Session':
-        return Session.find_user_session(self)
+    def session(self) -> 'GameSession':
+        return GameSession.find_user_session(self)
 
     @property
     def is_oracle(self):
@@ -38,25 +38,32 @@ class Chat(Document):
         return 'game_oracle' if self.is_oracle else 'game_rogue'
 
 
-class Session(Document):
-    oracle_chat = ReferenceField(Chat)
-    rogue_chat = ReferenceField(Chat)
+class GameSession(Document):
+    oracle_chat = ReferenceField(Chat)  # type: Chat
+    rogue_chat = ReferenceField(Chat)  # type: Chat
 
-    passphrase = ListField(StringField(), required=True)
+    passphrase = ListField(StringField(), required=True)  # type: List[str]
 
-    turn = StringField(choices=['oracle', 'rogue'])
+    turn = StringField(choices=['oracle', 'rogue'], default='rogue')  # type: str
+    rogue_room = IntField(default=0)  # type: int
 
-    dungeon = EmbeddedDocumentField(Dungeon, default=generate_dungeon)
+    # oracle stuff
+    map_researched = BooleanField(default=False)  # type: bool
+
+    # thief stuff
+    is_disorientated = BooleanField(default=False)  # type: bool
+
+    dungeon = EmbeddedDocumentField(Dungeon, default=generate_dungeon)  # type: Dungeon
 
     @classmethod
-    def find_user_session(cls, chat: Chat) -> Optional['Session']:
+    def find_user_session(cls, chat: Chat) -> Optional['GameSession']:
         try:
             return cls.objects.get(Q(oracle_chat=chat) | Q(rogue_chat=chat))
         except DoesNotExist:
             return None
 
     @classmethod
-    def find_by_pass(cls, words: List[str]) -> Optional['Session']:
+    def find_by_pass(cls, words: List[str]) -> Optional['GameSession']:
         try:
             return cls.objects.get(passphrase=[text_utils.normalize(w) for w in words])
         except DoesNotExist:
@@ -76,3 +83,9 @@ class Session(Document):
             self.rogue_chat = chat
         else:
             raise ValueError()
+
+    def next_turn(self):
+        if self.turn == 'oracle':
+            self.turn = 'rogue'
+        else:
+            self.turn = 'oracle'

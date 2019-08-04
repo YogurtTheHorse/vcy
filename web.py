@@ -1,11 +1,12 @@
-from __future__ import unicode_literals
-
 import json
 import logging
 from vcy import core as vcy_core
 from vcy.entities import InputMessage
 
 from flask import Flask, request
+
+from web_utils.utils import upload_picture
+
 app = Flask(__name__)
 
 
@@ -15,22 +16,20 @@ sessionStorage = {}
 vcy_core.init(True)
 
 
-@app.route("/", methods=['GET'])
+@app.route('/', methods=['GET'])
 def hello():
-    return "hello world!"
+    return 'hello world!'
 
 
-# Задаем параметры приложения Flask.
-@app.route("/", methods=['POST'])
+@app.route('/', methods=['POST'])
 def main():
-    # Функция получает тело запроса и возвращает ответ.
     logging.info('Request: %r', request.json)
 
     response = {
-        "version": request.json['version'],
-        "session": request.json['session'],
-        "response": {
-            "end_session": False
+        'version': request.json['version'],
+        'session': request.json['session'],
+        'response': {
+            'end_session': False
         }
     }
 
@@ -45,14 +44,11 @@ def main():
     )
 
 
-# Функция для непосредственной обработки диалога.
 def handle_dialog(req, res):
     # TODO: test two players with different session_id
     session_id = req['session']['session_id']
-    # _quit = False
+
     if req['session']['new']:
-        # Это новый пользователь.
-        # Инициализируем сессию и поприветствуем его.
         message = InputMessage(session_id, 'start', True)
 
         answer = vcy_core.process_input(message)
@@ -64,7 +60,16 @@ def handle_dialog(req, res):
 
     answer = vcy_core.process_input(message)
     res['response']['text'] = answer.message
-    return
+
+    if answer.image:
+        image_id = upload_picture(answer.image.image_path)
+
+        res['response']['card'] = {
+            'type': 'BigImage',
+            'image_id': image_id,
+            'title': answer.image.title,
+            'description': answer.image.description
+        }
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ class WaitRoomScreen(Screen):
     def on_open(self) -> Answer:
         passphrase = ' '.join(self.chat.session.passphrase)
 
-        return self.answer(f'Вашему другу нужно присоедениться к игре, а потом назвать эти четыре слова: {passphrase}. '
+        return self.answer(f'Вашему другу нужно присоединиться к игре, а потом назвать эти четыре слова: {passphrase}. '
                            f'Когда игрок подключится, скажите «Готово».')
 
     def process_message(self, message: InputMessage) -> Answer:

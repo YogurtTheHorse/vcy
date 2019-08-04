@@ -9,7 +9,7 @@ oauth_token = config['oauth_token']
 skill_id = config['skill_id']
 
 
-def upload_picture(path_to_picture):
+def upload_picture(path_to_picture: str) -> str:
     headers = {
         'Authorization': f'OAuth {oauth_token}'
         }

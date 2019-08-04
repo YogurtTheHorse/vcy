@@ -1,5 +1,7 @@
 from vcy import core as vcy_core
 from vcy.entities import InputMessage
+from vcy.managers.dungeon_manager import generate_dungeon, render_dungeon
+
 
 
 def main():
@@ -19,4 +21,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    render_dungeon(generate_dungeon(), 'test')
