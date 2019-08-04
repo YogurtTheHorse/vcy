@@ -1,6 +1,6 @@
-English: this repository contains code for „Voice Game Jam“ which was taking place in Indicator, SPb on Augusth 4th. Code is very dirty and presented only for an "educational" purposes 
+English: this repository contains code for „Voice Game Jam“ which was taking place in Indicator, SPb on Augusth 4th. Code is very dirty and presented only for an "educational" purposes. All code was written in 45 hours.
 
-Русский: этот репозиторий содержит код для «Голосового гейм джема», который проходил в Индиакторе, СПб четвертого августа. Код очень грязный и представлен исключительно для «образовательных» целей. Посмотреть мое выступление можно [тут](https://vk.com/video-162707306_456239094), оно начинается с 1:14.
+Русский: этот репозиторий содержит код для «Голосового гейм джема», который проходил в Индиакторе, СПб четвертого августа. Код очень грязный и представлен исключительно для «образовательных» целей. Вест код был написан в течение 45-и часов. Посмотреть мое выступление можно [тут](https://vk.com/video-162707306_456239094), оно начинается с 1:14.
 
 # Run steps
 
